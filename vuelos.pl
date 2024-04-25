@@ -1,4 +1,41 @@
-/* Base de conocimientos de pruebas */
+/*
+    Leer archivo de vuelos
+    - Se asume que el archivo viene en formato csv sin cabecera
+    - Las horas se manejan en formato militar (ej. 7 am = 700, 2 pm = 1400)
+    - Los días de vuelo se representan como una cadena en conjunto, donde m es martes y x es miércoles
+    - Ejemplo de fila del archivo:
+        pto_ordaz,maiquetia,700,800,5600,1,lmxjvsd
+*/
+linea_a_vuelo(Linea) :-
+    split_string(Linea, ',', '', Valores),
+    Valores = [Origen, Destino, HoraSalida, HoraLlegada, Costo, Vuelo, Dias],
+    atom_string(OrigenAtm, Origen),
+    atom_string(DestinoAtm, Destino),
+    number_string(HoraSalidaNum, HoraSalida),
+    number_string(HoraLlegadaNum, HoraLlegada),
+    number_string(CostoNum, Costo),
+    number_string(VueloNum, Vuelo),
+    atom_string(DiasAtm, Dias),
+    atom_chars(DiasAtm, ListaDias),
+    assertz(vuelo(OrigenAtm, DestinoAtm, HoraSalidaNum, HoraLlegadaNum, CostoNum, VueloNum, ListaDias)).
+
+leer_lineas(Stream, Lineas) :-
+    read_line_to_string(Stream, Linea),
+    (
+        Linea == end_of_file
+        -> Lineas = []
+        ;   leer_lineas(Stream, Resto),
+            Lineas = [Linea|Resto]
+    ).
+
+leer_csv(NombreArchivo) :-
+    open(NombreArchivo, read, Stream),
+    leer_lineas(Stream, Lineas),
+    close(Stream),
+    maplist(linea_a_vuelo, Lineas),
+    print('Vuelos agregados con éxito').
+
+/* Base de conocimientos de pruebas 
 vuelo(pto_ordaz,maiquetia,7,8,5600,1,['l','m','mi','j','v','s','d']).
 vuelo(maiquetia,porlamar,9,10,4800,2,['l','m','mi','j','v']).
 vuelo(maiquetia,pto_ordaz,15,16,5300,3,['l','m','v']).
@@ -8,6 +45,7 @@ vuelo(pto_ordaz,valencia,11,12.5,6700,6,['l','m','mi','j','v','s','d']).
 vuelo(maracaibo,valencia,8,8.75,4700,7,['l','m','mi','j','v','s','d']).
 vuelo(porlamar,maracaibo,2,3.5,5900,8,['l','m','mi','j','v','s','d']).
 vuelo(valencia,porlamar,17,18,4300,9,['l','s','d']).
+*/
 
 /* Dada una Ciudad genere la información de todos los vuelos que parten de ella. */
 print_vuelos_desde_ciudad([]).
