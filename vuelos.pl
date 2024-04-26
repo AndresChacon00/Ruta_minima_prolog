@@ -37,15 +37,23 @@ vuelos_a_ciudad(Destino) :-
 append([],L2,L2).
 append([H|T],L2,[H|L3]):-append(T,L2,L3).
 
-rutas(Origen, Destino, HoraActual, CostoT, [(Destino, NuevoCostoT)]) :-
-    vuelo(Origen, Destino, HoraSalida, _, Costo, _, _),
+isElement(X, [X|_]).
+isElement(X, [_|T]):- isElement(X,T).
+
+rutas(Origen, Destino, Dia, HoraActual, CostoT, [(Destino, NuevoCostoT)]) :-
+    vuelo(Origen, Destino, HoraSalida, _, Costo, _, VuelosSemanales),
+    isElement(Dia, VuelosSemanales),
     HoraActual =< HoraSalida,
     NuevoCostoT is CostoT + Costo.
 
 rutas(Origen, Destino, HoraActual, CostoT, [(Escala, NuevoCostoT)|RestoDestinos]) :-
-    vuelo(Origen, Escala, HoraSalida, HoraLlegada, Costo, _, _),
+    vuelo(Origen, Escala, HoraSalida, HoraLlegada, Costo, _, VuelosSemanales),
+    isElement(Dia, VuelosSemanales),
     Escala \= Destino,
     HoraActual =< HoraSalida,
     NuevoHoraActual is HoraLlegada,
     NuevoCostoT is CostoT + Costo,
     rutas(Escala, Destino, NuevoHoraActual, NuevoCostoT, RestoDestinos).
+
+
+
