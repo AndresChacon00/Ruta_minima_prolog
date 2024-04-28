@@ -78,20 +78,29 @@ append([H|T],L2,[H|L3]):-append(T,L2,L3).
 isElement(X, [X|_]).
 isElement(X, [_|T]):- isElement(X,T).
 
-rutas(Origen, Destino, Dia, HoraActual, CostoT, [(Destino, NuevoCostoT)]) :-
+ajustarTiempo(Tiempo, TiempoAjustado):-
+    Horas is Tiempo div 100,
+    Minutos is Tiempo mod 100,
+    (Minutos >= 60 -> NuevoHoras is Horas + 1, NuevoMinutos is Minutos - 60; NuevoHoras is Horas, NuevoMinutos is Minutos),
+    TiempoAjustado is NuevoHoras*100 + NuevoMinutos.
+
+
+rutas(Origen, Destino, Dia, HoraActual, CostoT,_, [(Destino, NuevoCostoT)]) :-
     vuelo(Origen, Destino, HoraSalida, _, Costo, _, VuelosSemanales),
     isElement(Dia, VuelosSemanales),
     HoraActual =< HoraSalida,
     NuevoCostoT is CostoT + Costo.
 
-rutas(Origen, Destino, HoraActual, CostoT, [(Escala, NuevoCostoT)|RestoDestinos]) :-
+rutas(Origen, Destino, Dia, HoraActual, CostoT, TiempoMinimoConexion, [(Escala, NuevoCostoT)|RestoDestinos]) :-
     vuelo(Origen, Escala, HoraSalida, HoraLlegada, Costo, _, VuelosSemanales),
     isElement(Dia, VuelosSemanales),
     Escala \= Destino,
-    HoraActual =< HoraSalida,
+    HoraMasConexion is HoraActual + TiempoMinimoConexion,
+    ajustarTiempo(HoraMasConexion, HoraActualConConexion),   
+    HoraActualConConexion =< HoraSalida,
     NuevoHoraActual is HoraLlegada,
     NuevoCostoT is CostoT + Costo,
-    rutas(Escala, Destino, NuevoHoraActual, NuevoCostoT, RestoDestinos).
+    rutas(Escala, Destino, Dia, NuevoHoraActual, NuevoCostoT, RestoDestinos).
 
 
 
