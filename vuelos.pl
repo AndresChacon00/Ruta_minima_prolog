@@ -82,7 +82,13 @@ obtener_hora_llegada_ruta([_|Resto], LlegadaFin) :-
 isElement(X, [X|_]).
 isElement(X, [_|T]):- isElement(X,T).
 
-rutas(Origen, Destino, Dia, HoraActual, CostoT, [(Destino, Salida, Llegada, NuevoCostoT)]) :-
+ajustarTiempo(Tiempo, TiempoAjustado):-
+    Horas is Tiempo div 100,
+    Minutos is Tiempo mod 100,
+    (Minutos >= 60 -> NuevoHoras is Horas + 1, NuevoMinutos is Minutos - 60; NuevoHoras is Horas, NuevoMinutos is Minutos),
+    TiempoAjustado is NuevoHoras*100 + NuevoMinutos.
+
+rutas(Origen, Destino, Dia, HoraActual, CostoT, _, [(Destino, Salida, Llegada, NuevoCostoT)]) :-
     vuelo(Origen, Destino, HoraSalida, HoraLlegada, Costo, _, VuelosSemanales),
     isElement(Dia, VuelosSemanales),
     HoraActual =< HoraSalida,
@@ -90,16 +96,18 @@ rutas(Origen, Destino, Dia, HoraActual, CostoT, [(Destino, Salida, Llegada, Nuev
     Llegada is HoraLlegada,
     NuevoCostoT is CostoT + Costo.
 
-rutas(Origen, Destino, Dia, HoraActual, CostoT, [(Escala, Salida, Llegada, NuevoCostoT)|RestoDestinos]) :-
+rutas(Origen, Destino, Dia, HoraActual, CostoT, TiempoMinimoConexion, [(Escala, Salida, Llegada, NuevoCostoT)|RestoDestinos]) :-
     vuelo(Origen, Escala, HoraSalida, HoraLlegada, Costo, _, VuelosSemanales),
     isElement(Dia, VuelosSemanales),
     Escala \= Destino,
-    HoraActual =< HoraSalida,
+    HoraMasConexion is HoraActual + TiempoMinimoConexion,
+    ajustarTiempo(HoraMasConexion, HoraActualConConexion),   
+    HoraActualConConexion =< HoraSalida,
     NuevoHoraActual is HoraLlegada,
     Salida is HoraSalida,
     Llegada is HoraLlegada,
     NuevoCostoT is CostoT + Costo,
-    rutas(Escala, Destino, Dia, NuevoHoraActual, NuevoCostoT, RestoDestinos).
+    rutas(Escala, Destino, Dia, NuevoHoraActual, NuevoCostoT, TiempoMinimoConexion, RestoDestinos).
 
 /*
     Dadas dos ciudades (origen y destino), determine la ruta de costo mínimo entre
@@ -129,7 +137,7 @@ main :-
     write('--- Cargar vuelos: leer_vuelos(<nombre_archivo>.csv)\n'),
     write('--- Ver vuelos desde una ciudad: vuelos_desde_ciudad(<ciudad>)\n'),
     write('--- Ver vuelos a una ciudad: vuelos_a_ciudad(<ciudad>)\n'),
-    write('--- Ver rutas entre dos ciudades: rutas(<origen>, <destino>, <l,m,x,j,v,s,d>, 0, 0, Rutas)\n'),
+    write('--- Ver rutas entre dos ciudades: rutas(<origen>, <destino>, <l,m,x,j,v,s,d>, 0, 0, <tiempo_min_conexion>, Rutas)\n'),
     write('--- Ver ruta de costo mínimo entre dos ciudades: ruta_min_costo(<origen>, <destino>, <l,m,x,j,v,s,d>, Ruta, Costo, Salida, Llegada)\n'),
     write('\n').
 
