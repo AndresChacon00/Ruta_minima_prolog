@@ -28,7 +28,7 @@ leer_lineas(Stream, Lineas) :-
             Lineas = [Linea|Resto]
     ).
 
-leer_csv(NombreArchivo) :-
+leer_vuelos(NombreArchivo) :-
     open(NombreArchivo, read, Stream),
     leer_lineas(Stream, Lineas),
     close(Stream),
@@ -119,3 +119,18 @@ ruta_min_costo(Origen, Destino, Dia, RutaMinCosto, CostoMin, HoraSalida, HoraLle
     min_costo(RestoRutas, Costo, Ruta, CostoMin, RutaMinCosto),
     obtener_hora_salida_ruta(RutaMinCosto, HoraSalida),
     obtener_hora_llegada_ruta(RutaMinCosto, HoraLlegada).
+
+/*
+    Mensaje de bienvenida
+*/
+main :-
+    write('Bienvenido al sistema de vuelos\n'),
+    write('OPCIONES:\n'),
+    write('--- Cargar vuelos: leer_vuelos(<nombre_archivo>.csv)\n'),
+    write('--- Ver vuelos desde una ciudad: vuelos_desde_ciudad(<ciudad>)\n'),
+    write('--- Ver vuelos a una ciudad: vuelos_a_ciudad(<ciudad>)\n'),
+    write('--- Ver rutas entre dos ciudades: rutas(<origen>, <destino>, <l,m,x,j,v,s,d>, 0, 0, Rutas)\n'),
+    write('--- Ver ruta de costo mínimo entre dos ciudades: ruta_min_costo(<origen>, <destino>, <l,m,x,j,v,s,d>, Ruta, Costo, Salida, Llegada)\n'),
+    write('\n').
+
+:- main.
