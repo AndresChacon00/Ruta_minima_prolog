@@ -121,8 +121,8 @@ min_costo([(Costo, _)|RestoRutas], CostoActual, RutaActual, CostoMin, RutaMinCos
     Costo >= CostoActual,
     min_costo(RestoRutas, CostoActual, RutaActual, CostoMin, RutaMinCosto).
 
-ruta_min_costo(Origen, Destino, Dia, RutaMinCosto, CostoMin, HoraSalida, HoraLlegada) :-
-    findall((Costo, Ruta), (rutas(Origen, Destino, Dia, 0, 0, Ruta), obtener_costo_ruta(Ruta, Costo)), Rutas),
+ruta_min_costo(Origen, Destino, Dia, TiempoMin, RutaMinCosto, CostoMin, HoraSalida, HoraLlegada) :-
+    findall((Costo, Ruta), (rutas(Origen, Destino, Dia, 0, 0, TiempoMin, Ruta), obtener_costo_ruta(Ruta, Costo)), Rutas),
     Rutas = [(Costo, Ruta)|RestoRutas],
     min_costo(RestoRutas, Costo, Ruta, CostoMin, RutaMinCosto),
     obtener_hora_salida_ruta(RutaMinCosto, HoraSalida),
@@ -138,7 +138,7 @@ main :-
     write('--- Ver vuelos desde una ciudad: vuelos_desde_ciudad(<ciudad>)\n'),
     write('--- Ver vuelos a una ciudad: vuelos_a_ciudad(<ciudad>)\n'),
     write('--- Ver rutas entre dos ciudades: rutas(<origen>, <destino>, <l,m,x,j,v,s,d>, 0, 0, <tiempo_min_conexion>, Rutas)\n'),
-    write('--- Ver ruta de costo mínimo entre dos ciudades: ruta_min_costo(<origen>, <destino>, <l,m,x,j,v,s,d>, Ruta, Costo, Salida, Llegada)\n'),
+    write('--- Ver ruta de costo mínimo entre dos ciudades: ruta_min_costo(<origen>, <destino>, <l,m,x,j,v,s,d>, <tiempo_min_conexion>, Ruta, Costo, Salida, Llegada)\n'),
     write('\n').
 
 :- main.
