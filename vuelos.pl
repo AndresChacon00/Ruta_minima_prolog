@@ -33,7 +33,7 @@ leer_vuelos(NombreArchivo) :-
     leer_lineas(Stream, Lineas),
     close(Stream),
     maplist(linea_a_vuelo, Lineas),
-    print('Vuelos agregados con éxito').
+    print('Vuelos agregados con exito').
 
 /*
     Dada una Ciudad genere la información de todos los vuelos que parten de ella.
@@ -138,7 +138,7 @@ main :-
     write('--- Ver vuelos desde una ciudad: vuelos_desde_ciudad(<ciudad>)\n'),
     write('--- Ver vuelos a una ciudad: vuelos_a_ciudad(<ciudad>)\n'),
     write('--- Ver rutas entre dos ciudades: rutas(<origen>, <destino>, <l,m,x,j,v,s,d>, 0, 0, <tiempo_min_conexion>, Rutas)\n'),
-    write('--- Ver ruta de costo mínimo entre dos ciudades: ruta_min_costo(<origen>, <destino>, <l,m,x,j,v,s,d>, <tiempo_min_conexion>, Ruta, Costo, Salida, Llegada)\n'),
+    write('--- Ver ruta de costo minimo entre dos ciudades: ruta_min_costo(<origen>, <destino>, <l,m,x,j,v,s,d>, <tiempo_min_conexion>, Ruta, Costo, Salida, Llegada)\n'),
     write('\n').
 
 :- main.
